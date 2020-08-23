@@ -1,10 +1,15 @@
 <template>
     <div class="home">
         <div class="container">
-            <el-upload class="upload" drag action="#" :auto-upload="false" multiple ref="upload" :file-list="fileList" :on-preview="handlePreview">
+            <el-upload class="upload" action="http://localhost:3000/upload" :auto-upload="false" ref="upload" :file-list="fileList" :on-change="handleChange" :show-file-list="false" :multiple="true" drag>
                 <i class="el-icon-upload"></i>
                 <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
             </el-upload>
+            <ul>
+                <li v-for="(item,index) in fileList" :key="index">
+                    name:{{item.name}}
+                </li>
+            </ul>
         </div>
         <div class="btn-upload">
             <el-button @click="upload()">上传</el-button>
@@ -13,8 +18,6 @@
 </template>
 
 <script>
-// @ is an alias to /src
-
 export default {
     name: "Home",
     data() {
@@ -24,10 +27,11 @@ export default {
     },
     methods: {
         upload() {
-            // this.$refs.upload.submit();
+            this.$refs.upload.submit();
         },
-        handlePreview(fileList) {
-            console.log(fileList);
+        handleChange(file, fileList) {
+            console.log(file);
+            this.fileList = fileList.slice(-3);
         }
     }
 };
@@ -46,7 +50,6 @@ export default {
         .upload {
             margin: 0px auto;
             max-width: 360px;
-            height: 100%;
             .el-upload {
                 width: 100%;
                 height: 50%;
