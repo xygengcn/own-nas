@@ -7,10 +7,21 @@ body,
     margin: 0;
     padding: 0;
     font-family: gotham, helvetica, arial, sans-serif;
-    color: #878787;
+    color: #606266;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
 }
 
 div {
     box-sizing: border-box;
 }
+
+ul,
+li {
+    margin: 0;
+    text-decoration: none;
+    outline: none;
+    list-style: none;
+    padding: 0;
+}
+
+$theme-color:#606266

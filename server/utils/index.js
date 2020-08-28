@@ -1,31 +1,51 @@
 const fs = require("fs");
+const path = require("path")
 
-
-function mkdir(paths, callback = () => {}) {
-    paths = paths.split('/');
-    let index = 1;
-
-    function next() {
-        if (index === paths.length + 1) return callback();
-        let dirPath = paths.slice(0, index++).join('/');
-        fs.access(dirPath, err => {
-            if (err) {
-                fs.mkdir(dirPath, next);
-            } else {
-                next();
-            }
-        })
+function mkdirsSync(dirname, callback = () => {}) {
+    if (fs.existsSync(dirname)) {
+        return true;
+    } else {
+        if (mkdirsSync(path.dirname(dirname))) {
+            fs.mkdirSync(dirname);
+            return true;
+        }
     }
-    next();
+    callback();
 }
 
-function mv(oldpath, newpath, callback = () => {}) {
-    fs.rename(oldpath, newpath, function(err) {
-        if (err) {
-            return callback(err, "");
+function rm(path) {
+    var files = [];
+    try {
+        if (fs.existsSync(url)) {
+            files = fs.readdirSync(url);
+            files.forEach(function(file, index) {
+                var curPath = path.join(url, file);
+                if (fs.statSync(curPath).isDirectory()) {
+                    rm(curPath);
+                } else {
+                    fs.unlinkSync(curPath);
+                }
+            });
+            fs.rmdirSync(url);
+            return true;
+        } else {
+            throw { error: "给定的路径不存在，请给出正确的路径" };
         }
-        return callback(err, newpath);
-    });
+    } catch (err) {
+        return err;
+    }
+}
+
+function mv(oldpath, newpath) {
+    return new Promise((resolve, reject) => {
+        fs.rename(oldpath, newpath, function(err) {
+            if (err) {
+                return reject(err)
+            }
+            return resolve(true);
+        });
+    })
+
 }
 
 function time(format = "yyyy-MM-dd HH:mm:ss", timestamp) {
@@ -46,6 +66,7 @@ function time(format = "yyyy-MM-dd HH:mm:ss", timestamp) {
 }
 module.exports = {
     time,
-    mkdir,
-    mv
+    mkdirsSync,
+    mv,
+    rm
 }

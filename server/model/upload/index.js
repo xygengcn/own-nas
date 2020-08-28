@@ -1,10 +1,6 @@
 const formidable = require("formidable")
 const path = require("path")
-const {
-    time,
-    mkdir,
-    mv
-} = require(path.join(__dirname, "../../utils"));
+const { time, mkdirsSync, mv, rm } = require(path.join(__dirname, "../../utils"));
 
 module.exports = (req, filepath) => {
     var form = new formidable.IncomingForm()
@@ -17,14 +13,15 @@ module.exports = (req, filepath) => {
             let name = Math.random().toString(36).substr(-8) + ext
             let namepath = time("/yyyy/MM/dd/")
             let dirpath = path.join(form.uploadDir, namepath)
-            mkdir(dirpath, mv(files.file.path, path.join(dirpath, name), (err) => {
-                if (err) {
-                    rej(err);
-                }
+            mkdirsSync(dirpath, mv(files.file.path, path.join(dirpath, name)).then(() => {
                 files.file.path = path.join(req.headers.host + namepath + name);
                 res(files.file)
+            }).catch((err) => {
+                if (err) {
+                    console.error(err);
+                    rej(err);
+                }
             }))
-
         })
     })
 }
